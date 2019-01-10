@@ -1,10 +1,7 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<meta name="viewport" content="width=device-width" />
-		<title>Proj</title>
-		<style>
+<head>
+  <meta charset="utf-8">
+  <style>
     path {
       fill: none;
       stroke: #333;
@@ -22,7 +19,8 @@
     .site {
       stroke-width: .5px;
       stroke: #333;
-      fill: #9cf;
+      fill: #999fff;
+      opacity: 1
     }
 
     #slider{
@@ -74,127 +72,149 @@
       margin-right: .5em;
       width: 10px;
     }
+    
+    div.tooltip {
+  
+  color: #222;
+  background-color: #fff;
+  padding: .5em;
+  text-shadow: #f5f5f5 0 1px 0;
+  border-radius: 23.08px;
+  opacity: 0.9;
+  position: absolute;
+}
+
+.hidden {
+        display: none;
+ }
   </style>
+  
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
-	</head>
-	<body>
-		<div id="slider"></div>
-  <div class="legend1">
-  <div class="legend1"> <p class="country-name"><span class="key-dot good"></span>Good</p> </div>
-  <div class="legend1"> <p class="country-name"><span class="key-dot moderate"></span>Moderate</p> </div>
-  <div class="legend1"> <p class="country-name"><span class="key-dot unhealthyForS"></span>Unhealthy For Sensitive</p> </div>
-  <div class="legend1"> <p class="country-name"><span class="key-dot unhealthy"></span>Unhealthy</p> </div>
-  <div class="legend1"> <p class="country-name"><span class="key-dot veryUnhealthy"></span>Very Unhealthy</p> </div>
-  <div class="legend1"> <p class="country-name"><span class="key-dot hazardous"></span>Hazardous</p> </div>
-  </div>
-  <div id="vis"></div>
-  <script>
-  var width = 960,
-    height = 500;
+  
+</head>
 
-	var mapPath = "us.json";
-  var projection = d3.geoAlbersUsa()
+<body>
+  <div id="slider"></div>
+  <div class="legend1">
+    <div class="legend1"> <p class="country-name"><span class="key-dot good"></span>Good</p> 	</div>
+
+    <div class="legend1"> <p class="country-name"><span class="key-dot moderate"></span>Moderate</p> </div>
+    <div class="legend1"> <p class="country-name"><span class="key-dot unhealthyForS"></span>Unhealthy For Sensitive</p> </div>
+    <div class="legend1"> <p class="country-name"><span class="key-dot unhealthy"></span>Unhealthy</p> </div>
+    <div class="legend1"> <p class="country-name"><span class="key-dot veryUnhealthy"></span>Very Unhealthy</p> </div>
+    <div class="legend1"> <p class="country-name"><span class="key-dot hazardous"></span>Hazardous</p> </div>
+  </div>
+  
+  
+  <script>
+    var width = 960,
+        height = 500;  
+
+    var mapPath = "us.json";
+    var projection = d3.geoAlbersUsa()
     .scale(1000)
     .translate([width / 2, height / 2]);
+    var tooltip = d3.select("body").append("div")
+    .attr("class", "hidden tooltip")	
 
-var path = d3.geoPath()
+    var path = d3.geoPath()
     .projection(projection);
 
-var svg = d3.select("body").append("svg")
+    var svg = d3.select("body").append("svg")
     .attr("width", width)
     .attr("height", height);
 
 
-// --------Slider-----------
-var formatDateIntoYear = d3.timeFormat("%Y");
-var formatDate = d3.timeFormat("%b %Y");
-var parseDate = d3.timeFormat("%m/%d/%y");
-var startDate = new Date("1980-01-01"),
-    endDate = new Date("2015-12-31");
+    // --------Slider-----------
+    var formatDateIntoYear = d3.timeFormat("%Y");
+    var formatDate = d3.timeFormat("%b %Y");
+    var parseDate = d3.timeFormat("%m/%d/%y");
+    var startDate = new Date("1980-01-01"),
+        endDate = new Date("2015-12-31");
 
-var margin = {top:0, right:25, bottom:0, left:25};
-var svgSlider = d3.select("#slider")
+    var margin = {top:0, right:25, bottom:0, left:25};    
+    var svgSlider = d3.select("#slider")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height",300);
 
-var x = d3.scaleTime()
+    var x = d3.scaleTime()
     .domain([startDate, endDate])
     .range([0, width])
     .clamp(true);
 
-var slider = svgSlider.append("g")
+    var slider = svgSlider.append("g")
     .attr("class", "slider")
     .attr("transform", "translate(" + 45 + "," + 45 + ")scale("+0.9+")");
 
 
-var handle = slider.insert("circle", ".track-overlay")
+    var handle = slider.insert("circle", ".track-overlay")
     .attr("class", "handle")
     .attr("r", 9);
 
-var label = slider.append("text")
+    var label = slider.append("text")  
     .attr("class", "label")
     .attr("text-anchor", "middle")
     .text(formatDate(startDate))
     .attr("transform", "translate(0," + (-27) + ")")
 
-slider.append("line")
-  .attr("class", "track")
-  .attr("x1", x.range()[0])
-  .attr("x2", x.range()[1])
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-  .attr("class", "track-inset")
-  .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-  .attr("class", "track-overlay")
-  .call(d3.drag()
-        .on("start.interrupt", function() { slider.interrupt(); })
-        .on("start drag", function() { update(x.invert(d3.event.x));
-         }));
+    slider.append("line")
+      .attr("class", "track")
+      .attr("x1", x.range()[0])
+      .attr("x2", x.range()[1])
+      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+      .attr("class", "track-inset")
+      .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
+      .attr("class", "track-overlay")
+      .call(d3.drag()
+            .on("start.interrupt", function() { slider.interrupt(); })
+            .on("start drag", function() { update(x.invert(d3.event.x));
+                                         }));
 
 
 
-slider.insert("g", ".track-overlay")
-  .attr("class", "ticks")
-  .attr("transform", "translate(0," + 18 + ")")
-  .selectAll("text")
-  .data(x.ticks(10))
-  .enter()
-  .append("text")
-  .attr("x", x)
-  .attr("y", 10)
-  .attr("text-anchor", "middle")
-  .text(function(d) { return formatDateIntoYear(d); });
+    slider.insert("g", ".track-overlay")
+      .attr("class", "ticks")
+      .attr("transform", "translate(0," + 18 + ")")
+      .selectAll("text")
+      .data(x.ticks(10))
+      .enter()
+      .append("text")
+      .attr("x", x)
+      .attr("y", 10)
+      .attr("text-anchor", "middle")
+      .text(function(d) { return formatDateIntoYear(d); });
 
 
 
-function update(h) {
-  handle.attr("cx", x(h));
-  label.attr("x", x(h))
-    .text(formatDate(h));
+    function update(h) {
+      handle.attr("cx", x(h));
+      label.attr("x", x(h))
+        .text(formatDate(h));
 
-  var newStateData = aqi_dataset.filter(function(d) {
-    console.log("AQI", formatDateIntoYear(h))
-    return d.Year == formatDateIntoYear(h);
+      var newStateData = aqi_dataset.filter(function(d) {
+        console.log("AQI", formatDateIntoYear(h))
+        return d.Year == formatDateIntoYear(h);
 
-  });
+      });
 
-   colorState(newStateData);
+      colorState(newStateData);
 
-  var newData = _(site_data).filter( function(site) {
-      return site.commissioning_year < formatDateIntoYear(h);
-    })
-    displaySites(newData);
+      var newData = _(site_data).filter( function(site) {
+        return site.commissioning_year < formatDateIntoYear(h);
+      })
+      displaySites(newData);
 
 
-}
-
+    }
+    
 //---------------------------------------------
 var color = d3.scaleQuantize()
     	.range(["rgb(72,197,85)", "rgb(106,142,51)",
             "rgb(171,169,73)", "rgb(196,129,58)", "rgb(209,24,0)","rgb(101,41,43)"]);
-
+  
   color.domain([1,2,3,4,5,6]);
 
 var g = svg.append("g");
@@ -205,7 +225,7 @@ var g = svg.append("g");
     aqi_dataset=aqi;
     colorState(aqi_dataset)
   });
-
+    
 d3.csv("US-Coal.csv")
     .row(function(d) {
       return {
@@ -219,11 +239,11 @@ d3.csv("US-Coal.csv")
     .get(function(err, rows) {
     	if (err) return console.error(err);
       window.site_data = rows;
-    });
+    });   
 //--------------------------------------------
-
+    
  function colorState(data){
-
+   
    		d3.json("us.json", function(json) {
 
 	svg.selectAll("path")
@@ -238,8 +258,8 @@ d3.csv("US-Coal.csv")
       svg.selectAll("path")
     .data(data)
     .style("fill", function(d) {
-
-
+	
+     
 	var days = Number(d.Days);
       var good =Number(d.Good);
      var moderate =Number(d.Moderate);
@@ -247,8 +267,8 @@ d3.csv("US-Coal.csv")
      var unhealthy =Number(d.Unhealthy);
      var veryUnhealthy =Number(d.VeryUnhealthy);
      var hazardous =Number(d.Hazardous);
-
-    var sum =good + moderate * 2 + unhealthyForS*3 + unhealthy*4 + veryUnhealthy*5 + hazardous*6;
+     
+    var sum = good + moderate * 2 + unhealthyForS*3 + unhealthy*4 + veryUnhealthy*5 + hazardous*6;
      var avg =sum/days;
      console.log(sum);
      console.log(avg);
@@ -257,13 +277,13 @@ d3.csv("US-Coal.csv")
      }else{
        return "#bbb";
      }
-
+      
 });
 }
 
-
-
-//-----------------------------------------------------
+  
+   
+//-----------------------------------------------------    
 var displaySites = function(data) {
   var sites = svg.selectAll(".site")
       .data(data, function(d) {
@@ -278,9 +298,33 @@ var displaySites = function(data) {
       .attr("cy", function(d) {
         return projection([d.lng, d.lat])[1];
       })
-      .attr("r", 1)
-      .transition().duration(400)
-        .attr("r", 5);
+     // .attr("r", 1)
+     // .transition().duration(400)
+        .attr("r", 5)
+  
+  		.on('mouseover', function(d) {
+      d3.selectAll('.site')
+        .filter(function(e) {
+        return e !== d
+    	})
+      .style('opacity', .09)
+      var mouse = d3.mouse(svg.node()).map(function(x) {
+        return parseInt(x)
+      })
+      tooltip.classed("hidden", false)
+        .attr("style", "left:" + (mouse[0] + 20) +
+              "px; top:" + (mouse[1] +300) + "px")
+        .html(d.name + ": " + d.cap + "mW in " + d.commissioning_year)
+      })
+  		
+  		.on('mouseout', function(d) {
+     tooltip.classed("hidden", true)
+     d3.selectAll('.site')
+     .filter(function(e) {
+      	return e !== d
+    })
+    .style('opacity', 1)
+    });
 
   sites.exit()
     .transition().duration(200)
@@ -290,5 +334,4 @@ var displaySites = function(data) {
 
 
   </script>
-	</body>
-</html>
+</body>
