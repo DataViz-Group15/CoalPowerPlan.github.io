@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
+  <title>Treemap - Neat Zoom Effect</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -8,6 +9,7 @@
   
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-		awesome/4.4.0/css/font-awesome.min.css">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="temperature.css">
 </head>
 
 <body>
@@ -39,9 +41,9 @@
     var legendText = ["Good", "Moderate", "Unhealthy for sensitive", 
                       "Unhealthy", "Very Unhealthy", "Hazardous"];
     
-    var radius = d3.scaleSqrt()
-    .domain([0, 1717972])
-    .range([0, 24]);
+    var radius = d3.scaleLinear()
+    .domain([0, 5000])
+    .range([4, 25]);
     // --------Slider-----------
     var formatDateIntoYear = d3.timeFormat("%Y");
     var formatDate = d3.timeFormat("%b %Y");
@@ -101,22 +103,39 @@
       .attr("y", 10)
       .attr("text-anchor", "middle")
       .text(function(d) { return formatDateIntoYear(d); });
+//------------Legend---------------------------
+    
+ let tmp2 = ["rgb(72,197,85)", "rgb(106,142,51)",
+                 "rgb(171,169,73)", "rgb(196,129,58)", "rgb(209,24,0)","rgb(101,41,43)"]
+ var legend = d3.select("body").append("svg")
+ .attr("class", "legend")
+ .attr("width", 140)
+ .attr("height", 300)
+ .selectAll("g")
+ .data(tmp2)
+ .enter()
+ .append("g")
+ .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+
+    legend.append("rect")
+      .attr("width", 18)
+      .attr("height", 18)
+      .style("fill", function(d) {return d});
+
+    legend.append("text")
+      .data(legendText)
+      .attr("x", 24)
+      .attr("y", 9)
+      .attr("dy", ".35em")
+      .text(function(d) { return d; });
+	  
+    var legend2 =d3.select(".legend").append("circle")
+    .attr("transform","translate(0,120)")
+    .attr("class","site1")
+    .attr("r",6)
     
 //---------------------------------------------
-var color = d3.scaleQuantize().domain([1,2,3,4,5,6])
-    	.range(["rgb(72,197,85)", "rgb(106,142,51)",
-            "rgb(171,169,73)", "rgb(196,129,58)", "rgb(209,24,0)","rgb(101,41,43)"]);
-    
-var colorTemp = d3.scaleQuantize()
-                    .range(['rgb(255,247,188)', 
-                            'rgb(254,207,112)', 
-                    				'rgb(254,178,76)', 
-                            'rgb(217,95,14)', 
-                            'rgb(240,59,32)'])
-
-
-
-
   d3.csv("AQI.csv",function(error,aqi) {
   if (error) throw error;
     aqi_dataset=aqi;
@@ -131,7 +150,14 @@ var colorTemp = d3.scaleQuantize()
       var avg = parseFloat(d.avg);
       avgs.push(avg)
     });
-    colorTemp.domain([0, d3.max(avgs, function(d) { return d })])
+    quantile = d3.scaleQuantile().domain([
+        d3.min(temp, function(e) { return +e.avg; }),
+        d3.max(temp, function(e) { return +e.avg; })])
+        .range(d3.range(60));
+     
+     legendScale = d3.scaleLinear()
+        .domain([d3.min(temp, function(e) { return +e.avg; }), d3.max(temp, function(e) { return +e.avg; })])
+        .range([0, 60 * 5]);
   }) 
   
 
@@ -151,11 +177,6 @@ d3.csv("US-Coal.csv")
     	if (err) return console.error(err);
       window.site_data = rows;
     });   
-//-------------------------------------------- 
- var m = document.getElementById('map').getBoundingClientRect()
-     
-     var ml = m.left;
-    var mt = m.top;
     
     
 //-----------------Ranking chart---------------------------
@@ -182,13 +203,14 @@ d3.csv("US-Coal.csv")
       .attr("text-anchor", "end")
       .text("Capacity (mW)");
 
+//--------Display power plants--------------
+    var m = document.getElementById('map').getBoundingClientRect()
+    var ml = m.left;
+    var mt = m.top;
 
-    
-    
-//-----------------------------------------------------    
-var displaySites = function(data) {
+		var displaySites = function(data) {
   
-  var sites = svg.selectAll(".site")
+ 		var sites = svg.selectAll(".site")
       .data(data, function(d) {
         return d.commissioning_year;
       });
@@ -201,7 +223,7 @@ var displaySites = function(data) {
       .attr("cy", function(d) {
         return projection([d.longitude, d.latitude])[1];
       })
-      .attr("r", function (d) { return 12*radius(d.cap)+"px"; })
+      .attr("r", function (d) { return radius(d.cap)+"px";  })
   		.on('mouseover', function(d) {
         d3.selectAll('.site')
           .filter(function(e) {
@@ -213,12 +235,9 @@ var displaySites = function(data) {
         })
         
         tooltip.classed("hidden", false)
-          .attr("style", "left:" + (mouse[0] + ml)*0.45 +
-                "px; top:" + (mouse[1] + mt)*0.75 + "px")
+          .attr("style", "left:" + (mouse[0] + ml)*0.45 +"px;" +
+                "top:" + (mouse[1]*0.75 + mt) + "px;")
           .html(d.name + ": " + d.cap + "mW in " + d.commissioning_year)
-		console.log(mouse)
-        console.log(m)
-		console.log(tooltip.attr("style"))
       })
 
   		.on('mouseout', function(d) {

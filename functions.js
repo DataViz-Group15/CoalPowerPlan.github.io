@@ -23,72 +23,150 @@ function update(h) {
 }
 
 
-function colorState(data) {
 
+function colorState(data) { 
+   
   d3.json("us.json", function(json) {
-
-    svg.selectAll("path")
-      .data(json.features)
-      .enter()
-      .append("path")
-      .attr("d", path)
-      .style("stroke", "#fff")
-      .style("stroke-width", "1")
-      .style("fill", "#bbb")
-  });   
+      
+	svg.selectAll("path")
+    .data(json.features)
+    .enter()
+    .append("path")
+    .attr("d", path)
+    .style("stroke", "#fff")
+    .style("stroke-width", "1")
+  	.attr("class","state");
+    
+ });   
+  if(!temp){
+  svg.selectAll("path")
+  .attr("class","state");
+    
   svg.selectAll("path")
     .data(data)
-    .style("fill", function(d) {
-    if(!temp) {
-      var days = Number(d.Days);
-      var good =Number(d.Good);
-      var moderate =Number(d.Moderate);
-      var unhealthyForS = Number(d.UnhealthyForS);
-      var unhealthy =Number(d.Unhealthy);
-      var veryUnhealthy =Number(d.VeryUnhealthy);
-      var hazardous =Number(d.Hazardous);
+    .attr("class", function(d) {
+        if(d.Days != 0){
+          var days = Number(d.Days);
+          var good =Number(d.Good);
+          var moderate =Number(d.Moderate);
+          var unhealthyForS = Number(d.UnhealthyForS);
+          var unhealthy =Number(d.Unhealthy);
+          var veryUnhealthy =Number(d.VeryUnhealthy);
+          var hazardous =Number(d.Hazardous);
 
-      var sum = good + moderate * 2 + unhealthyForS*3 + unhealthy*4 + veryUnhealthy*5 + hazardous*6;
-      var avg =sum/days;
-      if(days){
-        return  color(avg);
-      }else{
-        return "#bbb";
-      }
-    } else {
-      var avg = Number(d.avg)
-      return colorTemp(avg)
-    }
-  });
-  if(!temp){
+          var sum = good + moderate * 2 + unhealthyForS*3 + unhealthy*4 + veryUnhealthy*5 + hazardous*6;
+            var avg =Math.round(sum/days);
+            return "state-"+avg;
+          }else{
+            console.log("warning");
+            return "state";
+          }
+        
+});
+    
+     d3.selectAll(".legend").remove();
+     let tmp2 = ["rgb(72,197,85)", "rgb(106,142,51)",
+                 "rgb(171,169,73)", "rgb(196,129,58)", "rgb(209,24,0)","rgb(101,41,43)"]
+     var legend = d3.select("body").append("svg")
+     .attr("class", "hidden legend")
+     .classed("hidden", false)
+     .attr("width", 140)
+     .attr("height", 500)
+     .selectAll("g")
+     .data(tmp2)
+     .enter()
+     .append("g")
+     .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+     
 
-    let tmp2 = ["rgb(72,197,85)", "rgb(106,142,51)",
-                "rgb(171,169,73)", "rgb(196,129,58)", "rgb(209,24,0)","rgb(101,41,43)"]
-
-    var legend = d3.select("body").append("svg").attr("class", "legend")
-    .attr("width", 140)
-    .attr("height", 200)	
-    .selectAll("g")
-    .data(tmp2)
-    .enter()
-    .append("g")
-    .attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
-
-    legend.append("rect")
-      .attr("width", 18)
-      .attr("height", 18)
-      .style("fill", function(d) {return d});
-
-    legend.append("text")
+     legend.append("rect")
+       .attr("width", 18)
+       .attr("height", 18)
+       .style("fill", function(d) {return d});
+     
+     legend.append("text")
       .data(legendText)
       .attr("x", 24)
       .attr("y", 9)
       .attr("dy", ".35em")
       .text(function(d) { return d; });
+    
+    var legend2 =d3.select(".legend").append("circle")
+    .attr("transform","translate(14,160)")
+    .attr("class","site1")
+    .attr("r",4);
+    
+    var text2 =d3.select(".legend").append("text")
+    .attr("transform","translate(0,195)")
+    .attr("dy", ".35em")
+    .text("50 mW");
+    
+    var legend3 =d3.select(".legend").append("circle")
+    .attr("transform","translate(70,160)")
+    .attr("class","site1")
+    .attr("r",25);
+    
+    var text2 =d3.select(".legend").append("text")
+    .attr("transform","translate(45,195)")
+    .attr("dy", ".35em")
+    .text("5000 mW");
+  }else{
+    svg.selectAll("path")
+    .data(data)
+
+    .attr("class", function(d) {
+
+      if(d.avg){
+        return "temperature-" + quantile(Number(d.avg));
+      }else{
+        return "state";
+      }
+});
+    
+    d3.selectAll(".legend").remove();
+     var legend = d3.select("body").append("svg")
+     .attr("class","legend")
+     .attr("width", 140)
+     .attr("height", 500)
+     .append("g")
+      .attr('transform', 'translate(35, 10)')
+        .attr('id', 'legend');
+     
+     legend.selectAll('.colorbar') // LIGNE 11
+        .data(d3.range(60))
+        .enter().append('rect')
+        .attr('y', function(d) { return d * 5 + 'px'; })
+        .attr('height', '5px')
+        .attr('width', '20px')
+        .attr('x', '0px')
+        .attr("class", function(d) { return "temperature-" + d; });
+     
+     d3.select("body").select(".legend").append("g")
+     .attr('transform', 'translate(25, 10)')
+        .call(d3.axisLeft(legendScale).ticks(10));
+    
+    var legend2 =d3.select(".legend").append("circle")
+    .attr("transform","translate(14,360)")
+    .attr("class","site1")
+    .attr("r",4);
+    
+    var text2 =d3.select(".legend").append("text")
+    .attr("transform","translate(0,395)")
+    .attr("dy", ".35em")
+    .text("50 mW");
+    
+    var legend3 =d3.select(".legend").append("circle")
+    .attr("transform","translate(70,360)")
+    .attr("class","site1")
+    .attr("r",25);
+    
+    var text2 =d3.select(".legend").append("text")
+    .attr("transform","translate(45,395)")
+    .attr("dy", ".35em")
+    .text("5000 mW");
   }
-
+   
 }
-
 
 //----------BUTTON---------------
 function switch_mode(h) {
@@ -127,6 +205,7 @@ function buttonClicked(type) {
   }
 }
 
+// DRAWING RANKING CHART
 // DRAWING RANKING CHART
 function draw(df) {
   df.sort(function(a, b) {
@@ -184,13 +263,14 @@ function draw(df) {
     var t = d3.selectAll('.site')._groups[0]
     for(let i = 0; i < t.length; i++){
       if(t[i].__data__.name === d.name) {
+        console.log("NAMEE", t[i].__data__.name)
         pl = t[i] // co the truy cap cx, cy
         break;
       }
     }
     d3.selectAll('.site')
       .filter(function(e) {
-      if(e.name !== d.name){
+      if(e != undefined && e.name !== d.name){
         return e
       }
     })
@@ -207,7 +287,7 @@ function draw(df) {
     tooltip.classed("hidden", true)
     d3.selectAll('.site')
       .filter(function(e) {
-      return e.name !== d.nmae
+      return (e != undefined && e.name !== d.name)
     })
       .style('opacity', 1)  
   });

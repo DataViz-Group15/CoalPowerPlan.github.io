@@ -18,6 +18,13 @@ path {
       fill: #999fff;
       opacity: 1
     }
+		
+		.site1 {
+      stroke-width: .5px;
+      stroke: #333;
+      fill: #999fff;
+      opacity: 1
+    }
 
     #slider{
       height:75px;
@@ -96,24 +103,46 @@ body {
     
   svg text.labelF {
   fill:blue;
-  font-size: 20px;  
+  font-size: 15px;  
   font-weight: 60;
   text-anchor: middle;
 }
     .axis text {
   	font-size: 13px;
   }
-    
-    #map {
-      float: left;
-      transform: scale(0.7);
-      width: 49%;
-      margin-left: -150px
-    }
-    #hist {
-      float:right;
-      width: 56%;
-      transform: scale(0.75);
-      margin-left: 50px;
-      margin-top: 45px;
-    }
+
+#map {
+  float: left;
+  transform: scale(0.7);
+  width: 49%;
+  margin-left: -150px
+}
+#hist {
+  float:right;
+  width: 56%;
+  transform: scale(0.75);
+  margin-left: 50px;
+  margin-top: 45px;
+}
+
+.state{
+  fill : #bbb;
+}
+.state-1{
+  fill: rgb(72,197,85);
+}
+.state-2{
+  fill : rgb(106,142,51);
+}
+.state-3{
+  fill : rgb(171,169,73);
+}
+.state-4{
+  fill : rgb(196,129,58); 
+}
+.state-5{
+  fill : rgb(209,24,0); 
+}
+.state-6{
+  fill : rgb(101,41,43); 
+}
