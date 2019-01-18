@@ -1,5 +1,5 @@
 # Impact des centrales à charbon sur l'environnement aux Etats-Unis
-### Auteurs : Nadjmeddine Boudjellal, Quoc Do, Christopher Gizard, Raphael Ramos Tubino
+### Auteurs : Nadjmeddine Boudjellal, Quoc Do, Christopher Gizard, Rafael Ramos Tubino
 
 #### Description :
 Cette visualisation permet de voir l'implentation des centrales électriques à charbon aux Etats Unis ainsi que les indices de qualité de l'air et les températures moyennes par Etat sur une période de 1980 à aujourd'hui.
