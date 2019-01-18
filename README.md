@@ -17,7 +17,7 @@ Les informations liés à la qualité de l'air et de température proviennent re
 #### Sources des données : 
 -Informations sur les centrales à charbon : https://www.eia.gov/ 
 
--Informations sur les températures : *A COMPLETER* 
+-Informations sur les températures : https://data.world/data-society/global-climate-change-data
 
 -Informations sur les indices de qualité de l'air : https://aqs.epa.gov/aqsweb/airdata/ 
 
