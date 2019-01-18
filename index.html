@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
+  <title>Coal Power Plants Impact in Climate</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -12,29 +13,39 @@
 </head>
 
 <body>
-  <h1 style="text-align:center">Coal Impacts in USA</h1>
+  <h1>Coal Power Plants Impact in Climate</h1>
+  <div id="main">
   <div id="slider">
   </div>
-  <div id="main">
     <div id="map"></div>
 		<div id="hist"></div>    
   </div>
+  <div id="outertext">
   <div id="descrip">
-    <p style="font-size:15px"> 
+    <p style="font-size:15px" class="texte"> 
       Le but de ce projet a été de réaliser une visualisation pour être capable de vérifier s'il y a un impact de l'utilisation de centrales à charbon dans le climat. L'étude a été centré sur les États-Unis, car il s'agit d'un des plus grands utilisateurs de ce type de génération d'énergie.
-
-      La carte affiche la température et la qualité de l'air moyennes à chaque année et toutes les centrales à charbon dans la période de 1980 à 2015. Les légendes montrent la correspondance des couleurs et de la taille de chaque cercle, lequel varie en fonction de la puissance des centrales.
     </p>
-    <p style="font-size:15px">
+    <p style="font-size:15px" class="texte"> 
+      La carte affiche la température et la qualité de l'air moyennes à chaque année et toutes les centrales à charbon dans la période de 1980 à 2015. Les légendes montrent la correspondance des couleurs et la taille de chaque cercle, lequel varie en fonction de la puissance des centrales.
+    </p>
+    <p style="font-size:15px" class="texte">
       En raison des limitations des données disponibles, l'étude analyse la période de 1980 à 2015. Au début de cet intervalle de temps, les États-Unis possédaient déjà des nombreuses centrales à charbon, ce que nous a rendu un peu difficile de faire une comparaison avec le climat de l'époque où cette source d'énergie n'était pas utilisée.
-
+    </p>
+    <p style="font-size:15px" class="texte">
       La qualité de l'air peut être affectée en grande partie par la combustion des carburants fossiles, lesquels ne sont pas utilisés uniquement dans les centrales étudiées. Le nombre de véhicules à essence et diesel a une grande influence dans la qualité de l'air aussi, cependant ces données ne sont pas incluses dans notre projet.
     </p>
-    <p style="font-size:15px">
+    <p style="font-size:15px" class="texte">
       De plus, les lois sont devenues plus rigoureuses et des mesures pour diminuer l'impact des centrales à charbon sur l'environnement ont été implementées.
-
-      En raison des plusieurs points cités, notre étude s'est montrée incapable d'établir un lien entre les centrales à charbon et le climat du fait que diverses autres facteurs ont un grand impact sur l'environnement, faisant que les données examinées ici soient insuffisantes pour arriver à une conclusion satisfaisante
     </p>
+    <p style="font-size:15px" class="texte">
+      En raison des plusieurs points cités, notre étude s'est montrée incapable d'établir un lien entre les centrales à charbon et le climat du fait que diverses autres facteurs ont un grand impact sur l'environnement, faisant que les données examinées ici soient insuffisantes pour arriver à une conclusion.
+    </p>
+  </div>
+  </div>
+  <div id="membres">
+  	<div id="listem">
+  		<p> Quoc Do, Christopher Gizard, Nadjmeddine Boudjellal, Raphael Ramos Tubino</p>	
+  	</div>
   </div>
   <script>
     var width = 960,
@@ -342,3 +353,4 @@ buttonGroups.append("text")
   
   
 </body>
+
