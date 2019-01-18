@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <head>
   <meta charset="utf-8">
-  <title>Treemap - Neat Zoom Effect</title>
   <script src="https://d3js.org/d3.v4.min.js"></script>
   <script src="https://d3js.org/topojson.v1.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
@@ -13,11 +12,29 @@
 </head>
 
 <body>
+  <h1 style="text-align:center">Coal Impacts in USA</h1>
   <div id="slider">
   </div>
   <div id="main">
     <div id="map"></div>
 		<div id="hist"></div>    
+  </div>
+  <div id="descrip">
+    <p style="font-size:15px"> 
+      Le but de ce projet a été de réaliser une visualisation pour être capable de vérifier s'il y a un impact de l'utilisation de centrales à charbon dans le climat. L'étude a été centré sur les États-Unis, car il s'agit d'un des plus grands utilisateurs de ce type de génération d'énergie.
+
+      La carte affiche la température et la qualité de l'air moyennes à chaque année et toutes les centrales à charbon dans la période de 1980 à 2015. Les légendes montrent la correspondance des couleurs et de la taille de chaque cercle, lequel varie en fonction de la puissance des centrales.
+    </p>
+    <p style="font-size:15px">
+      En raison des limitations des données disponibles, l'étude analyse la période de 1980 à 2015. Au début de cet intervalle de temps, les États-Unis possédaient déjà des nombreuses centrales à charbon, ce que nous a rendu un peu difficile de faire une comparaison avec le climat de l'époque où cette source d'énergie n'était pas utilisée.
+
+      La qualité de l'air peut être affectée en grande partie par la combustion des carburants fossiles, lesquels ne sont pas utilisés uniquement dans les centrales étudiées. Le nombre de véhicules à essence et diesel a une grande influence dans la qualité de l'air aussi, cependant ces données ne sont pas incluses dans notre projet.
+    </p>
+    <p style="font-size:15px">
+      De plus, les lois sont devenues plus rigoureuses et des mesures pour diminuer l'impact des centrales à charbon sur l'environnement ont été implementées.
+
+      En raison des plusieurs points cités, notre étude s'est montrée incapable d'établir un lien entre les centrales à charbon et le climat du fait que diverses autres facteurs ont un grand impact sur l'environnement, faisant que les données examinées ici soient insuffisantes pour arriver à une conclusion satisfaisante
+    </p>
   </div>
   <script>
     var width = 960,
@@ -42,14 +59,14 @@
                       "Unhealthy", "Very Unhealthy", "Hazardous"];
     
     var radius = d3.scaleLinear()
-    .domain([0, 5000])
-    .range([4, 25]);
+    .domain([0, 1000])
+    .range([4, 15]);
     // --------Slider-----------
     var formatDateIntoYear = d3.timeFormat("%Y");
     var formatDate = d3.timeFormat("%b %Y");
     var parseDate = d3.timeFormat("%m/%d/%y");
     var startDate = new Date("1980-01-01"),
-        endDate = new Date("2015-12-31");
+        endDate = new Date("2018-12-31");
 
     var margin = {top:0, right:25, bottom:0, left:25};    
     var svgSlider = d3.select("#slider")
@@ -163,14 +180,15 @@
 
  
     
-d3.csv("US-Coal.csv")
+d3.csv("base.csv")
     .row(function(d) {
       return {
-        commissioning_year: d.commissioning_year,
-        latitude: parseFloat(d.latitude),
-        longitude: parseFloat(d.longitude),
-        name: d.name,
-        cap: d.capacity_mw
+        commissioning_year: d.Operating_Year,
+        Retirement_Year: d.Retirement_Year,
+        latitude: parseFloat(d.Latitude),
+        longitude: parseFloat(d.Longitude),
+        name: d.Entity_Name,
+        cap: d.Nameplate_Capacity
       };
     })
     .get(function(err, rows) {
@@ -198,8 +216,8 @@ d3.csv("US-Coal.csv")
 
     gF.append("text")
       .attr("transform", "rotate(-90)")
-      .attr("y", 6)
-      .attr("dy", "0.71em")
+      .attr("y", -50)
+      .attr("dy", "0.9em")
       .attr("text-anchor", "end")
       .text("Capacity (mW)");
 
@@ -212,7 +230,7 @@ d3.csv("US-Coal.csv")
   
  		var sites = svg.selectAll(".site")
       .data(data, function(d) {
-        return d.commissioning_year;
+        return d.Retirement_Year;
       });
 
   sites.enter().append("circle")
@@ -321,6 +339,6 @@ buttonGroups.append("text")
   .text(function(d) {return d;})
 
   </script>
-  <div id="ranking"></div>
+  
   
 </body>

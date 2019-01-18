@@ -106,6 +106,7 @@ body {
   font-size: 15px;  
   font-weight: 60;
   text-anchor: middle;
+  z-index: 1000
 }
     .axis text {
   	font-size: 13px;
@@ -123,6 +124,9 @@ body {
   transform: scale(0.75);
   margin-left: 50px;
   margin-top: 45px;
+}
+#descrip{
+  clear:both;
 }
 
 .state{

@@ -16,6 +16,9 @@ function update(h) {
   }
 
   var newData = _(site_data).filter( function(site) {
+    return site.Retirement_Year > formatDateIntoYear(h);
+  })
+  newData = _(newData).filter( function(site) {
     return site.commissioning_year < formatDateIntoYear(h);
   })
   displaySites(newData);
@@ -104,12 +107,12 @@ function colorState(data) {
     var legend3 =d3.select(".legend").append("circle")
     .attr("transform","translate(70,160)")
     .attr("class","site1")
-    .attr("r",25);
+    .attr("r",15);
     
     var text2 =d3.select(".legend").append("text")
     .attr("transform","translate(45,195)")
     .attr("dy", ".35em")
-    .text("5000 mW");
+    .text("1000 mW");
   }else{
     svg.selectAll("path")
     .data(data)
@@ -158,12 +161,12 @@ function colorState(data) {
     var legend3 =d3.select(".legend").append("circle")
     .attr("transform","translate(70,360)")
     .attr("class","site1")
-    .attr("r",25);
+    .attr("r",15);
     
     var text2 =d3.select(".legend").append("text")
     .attr("transform","translate(45,395)")
     .attr("dy", ".35em")
-    .text("5000 mW");
+    .text("1000 mW");
   }
    
 }
@@ -206,12 +209,24 @@ function buttonClicked(type) {
 }
 
 // DRAWING RANKING CHART
-// DRAWING RANKING CHART
 function draw(df) {
   df.sort(function(a, b) {
     return -(a.cap - b.cap);
   });
-  df = df.slice(0,10)
+  
+  let nameP = []
+  let dfp = []
+  var len = df.length
+  for(let i = 0; i < len; i++) {
+    if(nameP.length == 10){
+      break;
+    }
+    if(!nameP.includes(df[i].name)){
+      nameP.push(df[i].name);
+      dfp.push(df[i])
+    }
+  }
+  df = dfp;
 
   x1.domain(df.map(function (d) { return d.name; }));
   y1.domain([0, d3.max(df, function (d) {
@@ -228,9 +243,9 @@ function draw(df) {
     .call(d3.axisBottom(x1))
     .selectAll("text")
     .style("text-anchor", "end")
-    .attr("dx", "-0.96em")
-    .attr("dy", "-2.5em")
-    .attr("transform", "rotate(-60)" );
+    .attr("dx", "-1em")
+    .attr("dy", "0em")
+    .attr("transform", "rotate(-90)" );
 
   gF.select(".axis--y")
     .call(d3.axisLeft(y1).ticks(10));
@@ -262,19 +277,19 @@ function draw(df) {
     var pl;
     var t = d3.selectAll('.site')._groups[0]
     for(let i = 0; i < t.length; i++){
-      if(t[i].__data__.name === d.name) {
-        console.log("NAMEE", t[i].__data__.name)
-        pl = t[i] // co the truy cap cx, cy
+      if(t[i].__data__.name === d.name && t[i].__data__.cap === d.cap) {
+        pl = t[i] 
         break;
       }
     }
     d3.selectAll('.site')
       .filter(function(e) {
-      if(e != undefined && e.name !== d.name){
+      if(e != undefined && e !== d ){
         return e
       }
     })
-      .style('opacity', .09)
+    .style('opacity', .09)
+    
     var mouse = d3.mouse(svg.node()).map(function(x) {
       return parseInt(x)
     })
@@ -287,12 +302,15 @@ function draw(df) {
     tooltip.classed("hidden", true)
     d3.selectAll('.site')
       .filter(function(e) {
-      return (e != undefined && e.name !== d.name)
+      if(e != undefined && e !== d) {
+        console.log(e)
+        return e
+      }
     })
-      .style('opacity', 1)  
+    .style('opacity', 1)  
   });
 
-  temp2.attr("x", (function(d) { return x1(d.name)+30; }  ))
+  temp2.attr("x", (function(d) { return x1(d.name)+20; }  ))
     .attr("y", function(d) { return y1(d.cap) -15; })
     .attr("dy", ".75em")
     .text(function(d) { return parseInt(d.cap); });
