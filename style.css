@@ -21,7 +21,7 @@ path {
 
     #slider{
       height:75px;
-
+			width: 100%;
     }
 
     .ticks {
@@ -30,7 +30,7 @@ path {
     .track,
     .track-inset,
     .track-overlay {
-      stroke-linecap: round;
+     stroke-linecap: round;
     }
     .track {
       stroke: #000;
@@ -67,7 +67,7 @@ path {
 }
 
 .hidden {
-        display: none;
+      display: none;
  }
     
     /* Legend Font Style */
@@ -78,6 +78,42 @@ body {
 /* Legend Position Style */
 .legend {
 	position:absolute;
-	left:800px;
-	top:300px;
+	left:47%;
+	top:30%;
+  transform: scale(0.8);
 }
+ .bar {
+    fill: #9eff99;
+  }
+
+  .bar:hover {
+    fill: #999fff;
+  }
+
+  .axis--x path {
+    display: none;
+  }  
+    
+  svg text.labelF {
+  fill:blue;
+  font-size: 20px;  
+  font-weight: 60;
+  text-anchor: middle;
+}
+    .axis text {
+  	font-size: 13px;
+  }
+    
+    #map {
+      float: left;
+      transform: scale(0.7);
+      width: 49%;
+      margin-left: -150px
+    }
+    #hist {
+      float:right;
+      width: 56%;
+      transform: scale(0.75);
+      margin-left: 50px;
+      margin-top: 45px;
+    }
